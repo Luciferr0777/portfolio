@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knox — App Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0A0C0F;
+    --surface: #111418;
+    --border: #1E2328;
+    --accent: #3B82F6;
+    --accent-soft: rgba(59,130,246,0.12);
+    --text: #F0F2F5;
+    --muted: #6B7280;
+    --card-bg: #13171C;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.2rem 5vw;
+    background: rgba(10,12,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.25rem;
+    color: var(--text); text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--accent); color: #fff;
+    padding: 0.5rem 1.2rem; border-radius: 6px;
+    text-decoration: none; font-size: 0.875rem; font-weight: 500;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.88; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 5vw 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -30%; right: -10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent);
+    background: var(--accent-soft); border: 1px solid rgba(59,130,246,0.25);
+    padding: 0.35rem 0.85rem; border-radius: 100px;
+    margin-bottom: 2rem; width: fit-content;
+  }
+  .hero-label::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 800px;
+    margin-bottom: 1.5rem;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+
+  .hero-sub {
+    color: var(--muted); font-size: 1.1rem;
+    max-width: 500px; margin-bottom: 2.5rem; line-height: 1.7;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    padding: 0.85rem 2rem; border-radius: 8px;
+    text-decoration: none; font-weight: 500; font-size: 0.95rem;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    padding: 0.85rem 2rem; border-radius: 8px;
+    border: 1px solid var(--border);
+    text-decoration: none; font-weight: 500; font-size: 0.95rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--accent); transform: translateY(-1px); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 5rem;
+    padding-top: 2.5rem; border-top: 1px solid var(--border);
+  }
+  .stat-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.2rem; font-weight: 700; color: var(--text);
+  }
+  .stat-label { color: var(--muted); font-size: 0.85rem; margin-top: 0.15rem; }
+
+  /* SECTION */
+  section { padding: 6rem 5vw; }
+  .section-eyebrow {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700; letter-spacing: -0.025em;
+    margin-bottom: 1rem;
+  }
+  .section-desc { color: var(--muted); max-width: 520px; line-height: 1.7; margin-bottom: 3rem; }
+
+  /* APPS GRID */
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .app-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    transition: border-color 0.25s, transform 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .app-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+  .app-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0; transition: opacity 0.25s;
+  }
+  .app-card:hover::before { opacity: 1; }
+
+  .app-icon {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 1.25rem;
+    border: 1px solid var(--border);
+  }
+  .app-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;
+  }
+  .app-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.25rem; }
+
+  .app-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tag {
+    font-size: 0.72rem; font-weight: 500;
+    padding: 0.2rem 0.65rem; border-radius: 100px;
+    background: var(--accent-soft); color: var(--accent);
+    border: 1px solid rgba(59,130,246,0.2);
+  }
+
+  .app-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    color: var(--accent); font-size: 0.85rem; font-weight: 500;
+    text-decoration: none; margin-top: 1.25rem;
+    transition: gap 0.2s;
+  }
+  .app-link:hover { gap: 0.65rem; }
+
+  /* SKILLS */
+  .skills-section { background: var(--surface); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .skill-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.5rem;
+  }
+  .skill-name { font-weight: 500; margin-bottom: 0.75rem; font-size: 0.95rem; }
+  .skill-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .skill-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 1s ease; }
+
+  /* CONTACT */
+  .contact-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 3rem;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 2rem; flex-wrap: wrap;
+  }
+  .contact-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem;
+  }
+  .contact-box p { color: var(--muted); max-width: 420px; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem 5vw;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--muted); font-size: 0.85rem; flex-wrap: wrap; gap: 1rem;
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .pricing-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    position: relative;
+  }
+  .pricing-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 30px rgba(59,130,246,0.12);
+  }
+  .popular-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #fff;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 0.25rem 0.85rem; border-radius: 100px;
+    white-space: nowrap;
+  }
+  .plan-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 0.75rem;
+  }
+  .plan-price {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 800; color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+  .plan-price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+  .plan-desc { color: var(--muted); font-size: 0.88rem; margin-bottom: 1.25rem; line-height: 1.6; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .plan-features li { font-size: 0.88rem; color: var(--text); }
+
+  /* AVATAR */
+  .hero-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem; font-weight: 800; color: #fff;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 0 4px var(--accent-soft), 0 0 0 8px rgba(59,130,246,0.06);
+  }
+
+  /* WHATSAPP FLOAT */
+  .whatsapp-float {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 999;
+    background: #25D366; color: #fff;
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; text-decoration: none;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .whatsapp-float:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(37,211,102,0.5); }
+
+  /* TESTIMONIALS */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .testi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.75rem;
+  }
+  .testi-stars { color: #FBBF24; font-size: 0.9rem; margin-bottom: 0.75rem; }
+  .testi-text { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.25rem; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 0.75rem; }
+  .testi-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .testi-name { font-weight: 600; font-size: 0.9rem; }
+  .testi-role { color: var(--muted); font-size: 0.78rem; }
+
+  @media (max-width: 640px) {
+    .hero-stats { gap: 2rem; flex-wrap: wrap; }
+    .nav-links { display: none; }
+    .contact-box { padding: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">Knox<span>.dev</span></a>
+  <ul class="nav-links">
+    <li><a href="#apps">Apps</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Hire Me</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-avatar">K</div>
+  <div class="hero-label">Available for Projects</div>
+  <h1>Hi, I'm <em>Knox.</em><br>I Build Apps That <em>Matter.</em></h1>
+  <p class="hero-sub">Main ek passionate app developer hoon jo powerful, beautiful, aur user-friendly mobile apps banata hoon — idea se launch tak.</p>
+  <div class="hero-actions">
+    <a href="#apps" class="btn-primary">Mere Apps Dekho</a>
+    <a href="#contact" class="btn-ghost">Baat Karein →</a>
+  </div>
+  <div class="hero-stats">
+    <div>
+      <div class="stat-val">12+</div>
+      <div class="stat-label">Apps Launched</div>
+    </div>
+    <div>
+      <div class="stat-val">50k+</div>
+      <div class="stat-label">Total Downloads</div>
+    </div>
+    <div>
+      <div class="stat-val">4.8★</div>
+      <div class="stat-label">Avg Rating</div>
+    </div>
+  </div>
+</section>
+
+<section id="apps">
+  <div class="section-eyebrow">Portfolio</div>
+  <h2>Featured Apps</h2>
+  <p class="section-desc">Yeh kuch selected projects hain jo maine banaye hain. Har app ek real problem solve karta hai.</p>
+
+  <div class="apps-grid">
+    <div class="app-card">
+      <div class="app-icon" style="background:#1a2535;">💰</div>
+      <div class="app-name">BudgetBuddy</div>
+      <div class="app-desc">Personal finance tracker jo aapke kharche automatically categorize karta hai aur monthly insights deta hai.</div>
+      <div class="app-tags"><span class="tag">Flutter</span><span class="tag">Firebase</span><span class="tag">Android</span></div>
+      <a href="#" class="app-link">View Project →</a>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon" style="background:#1a2535;">🏃</div>
+      <div class="app-name">FitTrack Pro</div>
+      <div class="app-desc">Workout planner aur progress tracker with AI-based recommendations aur custom exercise library.</div>
+      <div class="app-tags"><span class="tag">React Native</span><span class="tag">Node.js</span><span class="tag">iOS</span></div>
+      <a href="#" class="app-link">View Project →</a>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon" style="background:#1a2535;">📚</div>
+      <div class="app-name">StudyMate</div>
+      <div class="app-desc">Students ke liye smart note-taking app with flashcards, quizzes aur revision reminders.</div>
+      <div class="app-tags"><span class="tag">Flutter</span><span class="tag">SQLite</span><span class="tag">Cross-platform</span></div>
+      <a href="#" class="app-link">View Project →</a>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon" style="background:#1a2535;">🛒</div>
+      <div class="app-name">QuickCart</div>
+      <div class="app-desc">Local grocery delivery app with real-time tracking, multiple payment options aur live inventory.</div>
+      <div class="app-tags"><span class="tag">React Native</span><span class="tag">Stripe</span><span class="tag">Maps API</span></div>
+      <a href="#" class="app-link">View Project →</a>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon" style="background:#1a2535;">🧘</div>
+      <div class="app-name">MindSpace</div>
+      <div class="app-desc">Meditation aur mental wellness app with guided sessions, mood tracking aur daily affirmations.</div>
+      <div class="app-tags"><span class="tag">Swift</span><span class="tag">iOS</span><span class="tag">HealthKit</span></div>
+      <a href="#" class="app-link">View Project →</a>
+    </div>
+
+    <div class="app-card">
+      <div class="app-icon" style="background:#1a2535;">📍</div>
+      <div class="app-name">LocalPulse</div>
+      <div class="app-desc">Nearby events aur community app jo aapke shehar mein kya ho raha hai woh real-time dikhata hai.</div>
+      <div class="app-tags"><span class="tag">Flutter</span><span class="tag">Google Maps</span><span class="tag">Firebase</span></div>
+      <a href="#" class="app-link">View Project →</a>
+    </div>
+  </div>
+</section>
+
+<section id="skills" class="skills-section">
+  <div class="section-eyebrow">Expertise</div>
+  <h2>Tech Stack</h2>
+  <p class="section-desc">In technologies mein main professionally kaam karta hoon.</p>
+
+  <div class="skills-grid">
+    <div class="skill-card"><div class="skill-name">Flutter / Dart</div><div class="skill-bar"><div class="skill-fill" style="width:92%"></div></div></div>
+    <div class="skill-card"><div class="skill-name">React Native</div><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+    <div class="skill-card"><div class="skill-name">Firebase</div><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+    <div class="skill-card"><div class="skill-name">Node.js / APIs</div><div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div></div>
+    <div class="skill-card"><div class="skill-name">iOS (Swift)</div><div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div></div>
+    <div class="skill-card"><div class="skill-name">Android (Kotlin)</div><div class="skill-bar"><div class="skill-fill" style="width:75%"></div></div></div>
+    <div class="skill-card"><div class="skill-name">UI/UX Design</div><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+    <div class="skill-card"><div class="skill-name">Play Store / App Store</div><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="section-eyebrow">Pricing</div>
+  <h2>Budget Mein App Banwao</h2>
+  <p class="section-desc">Har business ka budget alag hota hai — isliye maine 3 simple packages banaye hain. Koi hidden charges nahi.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="plan-label">Starter</div>
+      <div class="plan-price">₹5,000 <span>se shuru</span></div>
+      <p class="plan-desc">Chhote business ya personal use ke liye perfect.</p>
+      <ul class="plan-features">
+        <li>✅ Android App</li>
+        <li>✅ 3–5 Screens</li>
+        <li>✅ Basic UI Design</li>
+        <li>✅ Play Store Upload</li>
+        <li>✅ 1 Month Support</li>
+      </ul>
+      <a href="mailto:Rjsahu9580@gmail.com?subject=Starter Plan" class="btn-ghost" style="display:block;text-align:center;margin-top:1.5rem;">Sampark Karein</a>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="popular-badge">Most Popular</div>
+      <div class="plan-label">Pro</div>
+      <div class="plan-price">₹15,000 <span>se shuru</span></div>
+      <p class="plan-desc">Growing businesses ke liye — full-featured app with backend.</p>
+      <ul class="plan-features">
+        <li>✅ Android + iOS</li>
+        <li>✅ 8–12 Screens</li>
+        <li>✅ Custom UI/UX Design</li>
+        <li>✅ Firebase Backend</li>
+        <li>✅ Login / Signup</li>
+        <li>✅ Play Store + App Store</li>
+        <li>✅ 3 Months Support</li>
+      </ul>
+      <a href="mailto:Rjsahu9580@gmail.com?subject=Pro Plan" class="btn-primary" style="display:block;text-align:center;margin-top:1.5rem;">Sampark Karein</a>
+    </div>
+
+    <div class="pricing-card">
+      <div class="plan-label">Business</div>
+      <div class="plan-price">₹35,000 <span>se shuru</span></div>
+      <p class="plan-desc">E-commerce, delivery ya complex apps ke liye complete solution.</p>
+      <ul class="plan-features">
+        <li>✅ Android + iOS</li>
+        <li>✅ Unlimited Screens</li>
+        <li>✅ Premium UI/UX</li>
+        <li>✅ Payment Gateway</li>
+        <li>✅ Admin Dashboard</li>
+        <li>✅ API Integration</li>
+        <li>✅ 6 Months Support</li>
+      </ul>
+      <a href="mailto:Rjsahu9580@gmail.com?subject=Business Plan" class="btn-ghost" style="display:block;text-align:center;margin-top:1.5rem;">Sampark Karein</a>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-box">
+    <div>
+      <h3>Koi Project Hai?</h3>
+      <p>Aapka idea ek great app ban sakta hai. Mujhse baat karein — free consultation ke saath shuru karte hain.</p>
+    </div>
+    <a href="mailto:Rjsahu9580@gmail.com" class="btn-primary" style="white-space:nowrap;">Email Karein →</a>
+  </div>
+</section>
+
+<section id="testimonials" style="background:var(--surface);">
+  <div class="section-eyebrow">Reviews</div>
+  <h2>Customers Kya Kehte Hain</h2>
+  <p class="section-desc">Jinke apps maine banaye unka feedback — genuine aur unedited.</p>
+  <div class="testimonials-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Knox ne mera business app sirf 2 hafte mein bana diya. Budget mein tha aur quality top-notch thi. Bahut khush hoon!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">R</div>
+        <div><div class="testi-name">Rahul Sharma</div><div class="testi-role">Retail Shop Owner, Delhi</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Maine sochi nahi thi itni aachi app itne kam budget mein ban sakti hai. Knox ka kaam clean aur professional hai."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">P</div>
+        <div><div class="testi-name">Priya Patel</div><div class="testi-role">Tuition Center Owner, Mumbai</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Fast delivery, regular updates aur responsive support. Mera delivery app Play Store pe hai aur customers love kar rahe hain!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">A</div>
+        <div><div class="testi-name">Amit Verma</div><div class="testi-role">Food Delivery Startup, Pune</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WhatsApp Float Button -->
+<a href="https://wa.me/91XXXXXXXXXX?text=Hi%20Knox!%20Mujhe%20ek%20app%20banwani%20hai" class="whatsapp-float" target="_blank" title="WhatsApp pe Message Karein">💬</a>
+
+<footer>
+  <span>© 2026 Knox. All rights reserved.</span>
+  <span>Made with ❤️ for great apps</span>
+</footer>
+
+</body>
+</html>
